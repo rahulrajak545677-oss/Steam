@@ -44,6 +44,8 @@ jobs:
         run: cd "$SRC" && npm install
       - name: Align Expo package versions with the SDK
         run: cd "$SRC" && npx expo install --fix
+      - name: Pin expo-font to the SDK 54 version
+        run: cd "$SRC" && npm install expo-font@~14.0.12
       - name: Diagnostics (which package has no version?)
         continue-on-error: true
         run: |
