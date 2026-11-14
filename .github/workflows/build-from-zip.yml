@@ -44,6 +44,16 @@ jobs:
         run: cd "$SRC" && npm install
       - name: Align Expo package versions with the SDK
         run: cd "$SRC" && npx expo install --fix
+      - name: Diagnostics (which package has no version?)
+        continue-on-error: true
+        run: |
+          cd "$SRC"
+          echo "== installed versions =="
+          npm ls expo expo-modules-core expo-modules-autolinking expo-router expo-constants expo-linking 2>&1 | head -40
+          echo "== autolinking modules (android) =="
+          npx expo-modules-autolinking resolve --platform android --json > /tmp/al.json 2>/tmp/al.err || true
+          head -c 800 /tmp/al.err
+          node -e "const d=JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'));(d.modules||[]).forEach((m,i)=>console.log(i,m.packageName,m.packageVersion,(m.projects||[]).map(p=>JSON.stringify(p.publication)).join(' ')))" /tmp/al.json
       - name: Generate native Android project
         run: cd "$SRC" && npx expo prebuild --platform android --no-install
       - name: Build APK (arm64, test-signed)
