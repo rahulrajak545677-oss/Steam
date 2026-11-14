@@ -42,6 +42,8 @@ jobs:
           java-version: 17
       - name: Install dependencies
         run: cd "$SRC" && npm install
+      - name: Align Expo package versions with the SDK
+        run: cd "$SRC" && npx expo install --fix
       - name: Generate native Android project
         run: cd "$SRC" && npx expo prebuild --platform android --no-install
       - name: Build APK (arm64, test-signed)
